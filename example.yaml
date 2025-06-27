@@ -1,0 +1,86 @@
+Tk:
+    title: YAML Tkinter Example
+    geometry: 400x400
+    children:
+        - Frame:
+            children:
+                - Label:
+                    text: YAML Tkinter Example
+                    fg: red
+                    font: ['', 20, bold]
+                    pack:
+                        side: left
+                - Frame:
+                    pack:
+                        side: left
+                        expand: true
+                        fill: x
+                - Button:
+                    id: exit_button # reference this button for later access
+                    text: Exit
+                    pack:
+                        side: left
+            pack:
+                side: top
+                fill: x
+        - Frame:
+            children:
+                - Frame:
+                    highlightbackground: black
+                    highlightthickness: 1
+                    children:
+                        - Label:
+                            text: type something
+                            pack:
+                                side: top
+                        - Entry:
+                            id: entry
+                            pack:
+                                side: top
+                        - Label:
+                            id: entry_label
+                            pack:
+                                side: top
+                    pack:
+                        side: left
+                - Frame:
+                    children:
+                        - Checkbutton:
+                            text: foo
+                            pack: []
+                        - Checkbutton:
+                            text: bar
+                            pack: []
+                    pack:
+                        side: left
+                - Frame:
+                    children:
+                        - Radiobutton:
+                            id: foo_radio
+                            text: foo
+                            value: foo
+                            pack: []
+                        - Radiobutton:
+                            id: bar_radio
+                            text: bar
+                            value: bar
+                            pack: []
+                        - Label:
+                            id: radio_label
+                            pack:
+                                side: top
+                    pack:
+                        side: left
+                - Frame:
+                    pack:
+                        side: left
+                        expand: true
+                        fill: both
+            pack:
+                side: top
+                fill: x
+        - Frame:
+            pack:
+                side: top
+                expand: true
+                fill: both

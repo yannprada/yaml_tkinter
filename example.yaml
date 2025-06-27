@@ -36,12 +36,16 @@ Tk:
                                 side: top
                         - Entry:
                             id: entry
-                            text_var: entry_var
+                            text_var:
+                                name: entry_var
+                                type: string
                             pack:
                                 side: top
                         - Label:
                             id: entry_label
-                            text_var: entry_var
+                            text_var:
+                                name: entry_var
+                                type: string
                             pack:
                                 side: top
                     pack:
@@ -50,26 +54,48 @@ Tk:
                     children:
                         - Checkbutton:
                             text: foo
+                            # this method must then be defined in the application class
+                            command: on_checkbutton_foobar
+                            var:
+                                name: check_foo_var
+                                type: int
                             pack: []
                         - Checkbutton:
                             text: bar
+                            # this method must then be defined in the application class
+                            command: on_checkbutton_foobar
+                            var:
+                                name: check_bar_var
+                                type: int
+                            pack: []
+                        - Label:
+                            text_var:
+                                name: check_foobar_var
+                                type: string
                             pack: []
                     pack:
                         side: left
+                        expand: true
                 - Frame:
                     children:
                         - Radiobutton:
                             text: foo
                             value: foo
-                            var: radio_var
+                            var:
+                                name: radio_var
+                                type: string
                             pack: []
                         - Radiobutton:
                             text: bar
                             value: bar
-                            var: radio_var
+                            var:
+                                name: radio_var
+                                type: string
                             pack: []
                         - Label:
-                            text_var: radio_var
+                            text_var:
+                                name: radio_var
+                                type: string
                             pack: []
                     pack:
                         side: left

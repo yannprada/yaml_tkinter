@@ -7,8 +7,8 @@ except ImportError:
 
 
 class Builder:
-    tk_widgets = {}
     tk_variables = {}
+    tk_widgets = {}
     
     def __init__(self, filename, application):
         self.application = application
@@ -36,12 +36,11 @@ class Builder:
                     continue
                 case 'id':
                     self.tk_widgets[value] = widget
+                    self.application.tk_widgets[value] = widget
                 case 'var':
-                    widget.configure(variable=self._get_string_var(value))
-                case 'int_var':
-                    widget.configure(textvariable=self._get_int_var(value))
+                    widget.configure(variable=self._get_var(value))
                 case 'text_var':
-                    widget.configure(textvariable=self._get_string_var(value))
+                    widget.configure(textvariable=self._get_var(value))
                 case 'command':
                     cmd = getattr(self.application, value)
                     widget.configure(command=cmd)
@@ -56,13 +55,22 @@ class Builder:
         
         return widget
     
-    def _get_var(self, name, var_class):
-        var = self.tk_variables.get(name, var_class())
-        self.tk_variables[name] = var
+    def _get_var(self, data):
+        # check if the variable has already been created
+        if data['name'] in self.tk_variables:
+            return self.tk_variables[data['name']]
+        
+        # otherwise, create the variable, using the appropriate type
+        var = None
+        match data['type']:
+            case 'int':
+                var = tk.IntVar()
+            case 'string':
+                var = tk.StringVar()
+            case _:
+                raise TypeError(f"Unexpected variable type: {data['type']}")
+        
+        # reference it for late lookup
+        self.tk_variables[data['name']] = var
+        self.application.tk_variables[data['name']] = var
         return var
-    
-    def _get_int_var(self, name):
-        return self._get_var(name, tk.IntVar)
-    
-    def _get_string_var(self, name):
-        return self._get_var(name, tk.StringVar)

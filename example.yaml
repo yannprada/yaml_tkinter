@@ -16,8 +16,9 @@ Tk:
                         expand: true
                         fill: x
                 - Button:
-                    id: exit_button # reference this button for later access
                     text: Exit
+                    # this method must then be defined in the application class
+                    command: on_button_exit
                     pack:
                         side: left
             pack:
@@ -35,10 +36,12 @@ Tk:
                                 side: top
                         - Entry:
                             id: entry
+                            text_var: entry_var
                             pack:
                                 side: top
                         - Label:
                             id: entry_label
+                            text_var: entry_var
                             pack:
                                 side: top
                     pack:
@@ -56,19 +59,18 @@ Tk:
                 - Frame:
                     children:
                         - Radiobutton:
-                            id: foo_radio
                             text: foo
                             value: foo
+                            var: radio_var
                             pack: []
                         - Radiobutton:
-                            id: bar_radio
                             text: bar
                             value: bar
+                            var: radio_var
                             pack: []
                         - Label:
-                            id: radio_label
-                            pack:
-                                side: top
+                            text_var: radio_var
+                            pack: []
                     pack:
                         side: left
                 - Frame:

@@ -18,21 +18,32 @@ class Builder:
     tk_variables = {}
     tk_widgets = {}
     
-    def __init__(self, filename, application):
-        self.application = application
+    def __init__(self, filename, root_class):
+        # build the widgets
         with open(filename) as f:
             data = yaml.load(f, Loader)
-            self.root = self._build_widget(data)
+            self._create_widget(data, None, root_class)
+        
+        # keep a reference to widgets with ids and tk varables
+        self.root.tk_widgets = self.tk_widgets
+        self.root.tk_variables = self.tk_variables
     
-    def _build_widget(self, data, parent=None):
+    def _create_widget(self, data, parent=None, root_class=None):
         # the first key should be the name of the widget
         widget_name = next(iter(data.keys()))
         
         # instanciate the widget
-        widget_class = getattr(tk, widget_name)
-        widget = widget_class(parent)
-        data = data[widget_name]
+        if parent is None:
+            # widget is root
+            self.root = root_class()
+            widget = self.root
+        else:
+            widget_class = getattr(tk, widget_name)
+            widget = widget_class(parent)
         
+        self._build_widget(widget, data[widget_name])
+    
+    def _build_widget(self, widget, data):
         # run through the widgets options, commands, children and special keys
         for key, value in data.items():
             match key:
@@ -40,16 +51,15 @@ class Builder:
                     continue
                 case 'children':
                     for child_data in value:
-                        self._build_widget(child_data, widget)
+                        self._create_widget(child_data, widget)
                 case 'id':
                     self.tk_widgets[value] = widget
-                    self.application.tk_widgets[value] = widget
                 case 'variable':
                     widget.configure(variable=self._get_var(value))
                 case 'text_variable':
                     widget.configure(textvariable=self._get_var(value))
                 case 'app_command':
-                    cmd = getattr(self.application, value)
+                    cmd = getattr(self.root, value)
                     widget.configure(command=cmd)
                 case _:
                     if key in widget.configure():
@@ -57,8 +67,6 @@ class Builder:
                     else:
                         method = getattr(widget, key)
                         method(value)
-        
-        return widget
     
     def _get_var(self, data):
         # check if the variable has already been created
@@ -73,11 +81,4 @@ class Builder:
         # reference it for later lookup
         var_instance = var_class()
         self.tk_variables[data['name']] = var_instance
-        self.application.tk_variables[data['name']] = var_instance
         return var_instance
-
-
-class Application:
-    tk_variables = {}
-    tk_widgets = {}
-    

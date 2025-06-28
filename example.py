@@ -1,10 +1,9 @@
 import tkinter as tk
-from yamltk import Builder, Application
+from yamltk import Builder
 
 
-# this class is used to bind methods
-# and maybe other things in the future? FIXME
-class ExampleApp(Application):
+# inherit Tk or Frame
+class ExampleApp(tk.Tk):
     # define this method, so that it is bound automatically
     # since it is referenced in the example.yaml file
     def on_button_exit(self):
@@ -23,6 +22,5 @@ class ExampleApp(Application):
 
 
 if __name__ == '__main__':
-    app = ExampleApp()
-    builder = Builder('./example.yaml', app)
+    builder = Builder('./example.yaml', ExampleApp)
     builder.root.mainloop()

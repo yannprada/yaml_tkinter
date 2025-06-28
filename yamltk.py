@@ -6,6 +6,14 @@ except ImportError:
     from yaml import Loader, Dumper
 
 
+TK_VARIABLES = {
+    'boolean': tk.BooleanVar, 
+    'double': tk.DoubleVar, 
+    'int': tk.IntVar, 
+    'string': tk.StringVar
+}
+
+
 class Builder:
     tk_variables = {}
     tk_widgets = {}
@@ -58,23 +66,15 @@ class Builder:
             return self.tk_variables[data['name']]
         
         # otherwise, create the variable, using the appropriate type
-        var = None
-        match data['type']:
-            case 'boolean':
-                var = tk.BooleanVar()
-            case 'double':
-                var = tk.DoubleVar()
-            case 'int':
-                var = tk.IntVar()
-            case 'string':
-                var = tk.StringVar()
-            case _:
-                raise TypeError(f"Unexpected variable type: {data['type']}")
+        var_class = TK_VARIABLES.get(data['type'])
+        if var_class is None:
+            raise TypeError(f"Unexpected variable type: {data['type']}")
         
         # reference it for later lookup
-        self.tk_variables[data['name']] = var
-        self.application.tk_variables[data['name']] = var
-        return var
+        var_instance = var_class()
+        self.tk_variables[data['name']] = var_instance
+        self.application.tk_variables[data['name']] = var_instance
+        return var_instance
 
 
 class Application:

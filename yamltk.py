@@ -51,11 +51,11 @@ class Builder:
                     cmd = getattr(self.application, value)
                     widget.configure(command=cmd)
                 case _:
-                    self._case_other(widget, key, value)
+                    self._case_other(widget, key, value, widget_name)
         
         return widget
     
-    def _case_other(self, widget, key, value):
+    def _case_other(self, widget, key, value, widget_name):
         if key in widget.configure():
             widget.configure(**{key: value})
         elif hasattr(widget, key):

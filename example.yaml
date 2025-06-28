@@ -81,6 +81,7 @@ Tk:
                         - Radiobutton:
                             text: coffee
                             value: coffee
+                            # the variable radio_var will capture the value coffee
                             variable:
                                 name: radio_var
                                 type: string
@@ -88,11 +89,14 @@ Tk:
                         - Radiobutton:
                             text: tea
                             value: tea
+                            # the variable radio_var will capture the value tea
                             variable:
                                 name: radio_var
                                 type: string
                             pack: []
                         - Label:
+                            # label then uses the variable here
+                            # (notice this is a text_variable, and not a variable)
                             text_variable:
                                 name: radio_var
                                 type: string

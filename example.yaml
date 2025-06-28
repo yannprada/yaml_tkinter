@@ -18,7 +18,7 @@ Tk:
                 - Button:
                     text: Exit
                     # this method must then be defined in the application class
-                    command: on_button_exit
+                    app_command: on_button_exit
                     pack:
                         side: left
             pack:
@@ -36,14 +36,14 @@ Tk:
                                 side: top
                         - Entry:
                             id: entry
-                            text_var:
+                            text_variable:
                                 name: entry_var
                                 type: string
                             pack:
                                 side: top
                         - Label:
                             id: entry_label
-                            text_var:
+                            text_variable:
                                 name: entry_var
                                 type: string
                             pack:
@@ -55,21 +55,21 @@ Tk:
                         - Checkbutton:
                             text: foo
                             # this method must then be defined in the application class
-                            command: on_checkbutton_foobar
-                            var:
+                            app_command: on_checkbutton_foobar
+                            variable:
                                 name: check_foo_var
                                 type: int
                             pack: []
                         - Checkbutton:
                             text: bar
                             # this method must then be defined in the application class
-                            command: on_checkbutton_foobar
-                            var:
+                            app_command: on_checkbutton_foobar
+                            variable:
                                 name: check_bar_var
                                 type: int
                             pack: []
                         - Label:
-                            text_var:
+                            text_variable:
                                 name: check_foobar_var
                                 type: string
                             pack: []
@@ -81,19 +81,19 @@ Tk:
                         - Radiobutton:
                             text: coffee
                             value: coffee
-                            var:
+                            variable:
                                 name: radio_var
                                 type: string
                             pack: []
                         - Radiobutton:
                             text: tea
                             value: tea
-                            var:
+                            variable:
                                 name: radio_var
                                 type: string
                             pack: []
                         - Label:
-                            text_var:
+                            text_variable:
                                 name: radio_var
                                 type: string
                             pack: []

@@ -6,11 +6,6 @@ except ImportError:
     from yaml import Loader, Dumper
 
 
-WIDGETS = ['Canvas', 'Listbox', 'Menu', 'Text', 'Toplevel', 'Button', 'Checkbutton', 
-    'Entry', 'Frame', 'Label', 'LabelFrame', 'Menubutton', 'Message', 'OptionMenu', 
-    'PanedWindow', 'Radiobutton', 'Scale', 'Scrollbar', 'Spinbox', 'Tk']
-
-
 class Builder:
     tk_variables = {}
     tk_widgets = {}
@@ -24,8 +19,6 @@ class Builder:
     def _build_widget(self, data, parent=None):
         # the first key should be the name of the widget
         widget_name = next(iter(data.keys()))
-        if not widget_name in WIDGETS:
-            raise TypeError(f'Invalid widget: {widget_name}')
         
         # instanciate the widget
         widget_class = getattr(tk, widget_name)
@@ -51,19 +44,13 @@ class Builder:
                     cmd = getattr(self.application, value)
                     widget.configure(command=cmd)
                 case _:
-                    self._case_other(widget, key, value, widget_name)
+                    if key in widget.configure():
+                        widget.configure(**{key: value})
+                    else:
+                        method = getattr(widget, key)
+                        method(value)
         
         return widget
-    
-    def _case_other(self, widget, key, value, widget_name):
-        if key in widget.configure():
-            widget.configure(**{key: value})
-        elif hasattr(widget, key):
-            method = getattr(widget, key)
-            method(value)
-        else:
-            msg = f'Invalid attribute "{key}" for widget "{widget_name}"'
-            raise AttributeError(msg)
     
     def _get_var(self, data):
         # check if the variable has already been created

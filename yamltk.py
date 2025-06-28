@@ -73,6 +73,10 @@ class Builder:
         # otherwise, create the variable, using the appropriate type
         var = None
         match data['type']:
+            case 'boolean':
+                var = tk.BooleanVar()
+            case 'double':
+                var = tk.DoubleVar()
             case 'int':
                 var = tk.IntVar()
             case 'string':

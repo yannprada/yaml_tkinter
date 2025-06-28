@@ -15,8 +15,8 @@ class ExampleApp(Application):
         # here is how to access tk variables
         foo = self.tk_variables['check_foo_var'].get()
         bar = self.tk_variables['check_bar_var'].get()
-        foo = 'foo' if foo == 1 else ''
-        bar = 'bar' if bar == 1 else ''
+        foo = 'foo' if foo else ''
+        bar = 'bar' if bar else ''
         self.tk_variables['check_foobar_var'].set(f'{foo} {bar}')
     
     # TODO: example with manual event binding (command)

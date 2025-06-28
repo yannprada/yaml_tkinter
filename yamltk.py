@@ -32,7 +32,7 @@ class Builder:
                     continue
                 case 'children':
                     for child_data in value:
-                        child_widget = self._build_widget(child_data, widget)
+                        self._build_widget(child_data, widget)
                     continue
                 case 'id':
                     self.tk_widgets[value] = widget

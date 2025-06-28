@@ -79,15 +79,15 @@ Tk:
                 - Frame:
                     children:
                         - Radiobutton:
-                            text: foo
-                            value: foo
+                            text: coffee
+                            value: coffee
                             var:
                                 name: radio_var
                                 type: string
                             pack: []
                         - Radiobutton:
-                            text: bar
-                            value: bar
+                            text: tea
+                            value: tea
                             var:
                                 name: radio_var
                                 type: string

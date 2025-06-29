@@ -4,12 +4,11 @@ from yamltk import Builder
 
 # inherit Tk or Frame
 class ExampleApp(tk.Tk):
+    # required for root App, and each Addon
+    yaml_file = 'example.yaml'
+    
     # define this method, so that it is bound automatically
     # since it is referenced in the example.yaml file
-    def on_button_exit(self):
-        quit()
-    
-    # same as above
     def on_checkbutton_foobar(self):
         # here is how to access tk variables
         foo = self.tk_variables['check_foo_var'].get()
@@ -21,6 +20,14 @@ class ExampleApp(tk.Tk):
     # TODO: example with manual event binding (command)
 
 
+# Addon example
+class TitleFrame(tk.Frame):
+    yaml_file = 'title_frame.yaml'
+    
+    def on_button_exit(self):
+        quit()
+
+
 if __name__ == '__main__':
-    builder = Builder('./example.yaml', ExampleApp)
+    builder = Builder(ExampleApp, [TitleFrame])
     builder.root.mainloop()

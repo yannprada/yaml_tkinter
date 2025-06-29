@@ -1,29 +1,8 @@
-Tk:
+ExampleApp:
     title: YAML Tkinter Example
     geometry: 400x400
     children:
-        - Frame:
-            children:
-                - Label:
-                    text: YAML Tkinter Example
-                    fg: red
-                    font: ['', 20, bold]
-                    pack:
-                        side: left
-                - Frame:
-                    pack:
-                        side: left
-                        expand: true
-                        fill: x
-                - Button:
-                    text: Exit
-                    # this method must then be defined in the application class
-                    app_command: on_button_exit
-                    pack:
-                        side: left
-            pack:
-                side: top
-                fill: x
+        - TitleFrame: true  # value can be anything
         - Frame:
             children:
                 - Frame:

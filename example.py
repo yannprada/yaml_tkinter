@@ -16,8 +16,6 @@ class ExampleApp(tk.Tk):
         foo = 'foo' if foo else ''
         bar = 'bar' if bar else ''
         self.tk_variables['check_foobar_var'].set(f'{foo} {bar}')
-    
-    # TODO: example with manual event binding (command)
 
 
 # Branch example
@@ -28,6 +26,16 @@ class TitleFrame(tk.Frame):
         quit()
 
 
+class Item(tk.Frame):
+    yaml_file = 'item.yaml'
+
+
 if __name__ == '__main__':
-    builder = Builder(ExampleApp, [TitleFrame])
+    builder = Builder(ExampleApp, [TitleFrame, Item])
+    
+    def on_button_add():
+        builder._create_widget({'Item': True}, builder.tk_widgets['bottom_frame'])
+    
+    builder.tk_widgets['button_add'].configure(command=on_button_add)
+    
     builder.root.mainloop()

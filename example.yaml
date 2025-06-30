@@ -83,6 +83,14 @@ ExampleApp:
                     pack:
                         side: left
                 - Frame:
+                    children:
+                        - Button:
+                            id: button_add
+                            text: +
+                            font: ['', 16, bold]
+                            width: 3
+                            pack:
+                                side: right
                     pack:
                         side: left
                         expand: true
@@ -91,6 +99,7 @@ ExampleApp:
                 side: top
                 fill: x
         - Frame:
+            id: bottom_frame
             pack:
                 side: top
                 expand: true

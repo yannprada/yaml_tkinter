@@ -15,6 +15,7 @@ TitleFrame:
             text: Exit
             # this method must then be defined in the application class
             app_command: on_button_exit
+            width: 5
             pack:
                 side: left
     pack:

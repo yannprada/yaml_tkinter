@@ -1,0 +1,18 @@
+Item:
+    children:
+        - Label:
+            text: 'Item name'
+            pack:
+                side: top
+        - Entry:
+            pack:
+                side: top
+        - Label:
+            text: 'Price'
+            pack:
+                side: top
+        - Entry:
+            pack:
+                side: top
+    pack:
+        side: left

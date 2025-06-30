@@ -24,11 +24,9 @@ class Builder:
     tk_variables = {}
     tk_widgets = {}
     
-    def __init__(self, root_class, addons_classes=[]):
+    def __init__(self, root_class, addons_classes):
         # make a lookup by name
-        self.addons = {}
-        for addon_class in addons_classes:
-            self.addons[addon_class.__name__] = addon_class
+        self.addons = {cls.__name__: cls for cls in addons_classes}
         
         # create the root
         self.root = root_class()

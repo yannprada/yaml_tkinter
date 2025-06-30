@@ -66,8 +66,6 @@ class Builder:
         # run through the widgets options, commands, children and special keys
         for key, value in data.items():
             match key:
-                case 'widget':
-                    continue
                 case 'children':
                     for child_data in value:
                         self._create_widget(child_data, widget)

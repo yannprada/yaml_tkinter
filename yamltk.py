@@ -42,21 +42,23 @@ class Builder:
             data = yaml.load(f, Loader)
         return data
     
+    def add_branch(self, branch_name, parent=None):
+        widget = self.branches[branch_name](parent)
+        previous_branch = self.branch
+        self.branch = widget
+        
+        data = self._get_file_data(widget.yaml_file)
+        self._build_widget(widget, data[branch_name])
+        
+        self.branch = previous_branch
+    
     def _create_widget(self, data, parent=None):
         # the first key should be the name of the widget
         widget_name = next(iter(data.keys()))
         
         # instanciate the widget
         if widget_name in self.branches:
-            # widget is one of branches
-            widget = self.branches[widget_name]()
-            previous_branch = self.branch
-            self.branch = widget
-            
-            data = self._get_file_data(widget.yaml_file)
-            self._build_widget(widget, data[widget_name])
-            
-            self.branch = previous_branch
+            self.add_branch(widget_name, parent)
         else:
             widget_class = getattr(tk, widget_name)
             widget = widget_class(parent)

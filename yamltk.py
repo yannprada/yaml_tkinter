@@ -43,7 +43,7 @@ class Builder:
         return data
     
     def add_branch(self, branch_name, parent=None):
-        # loads a known Branch and add it to the tree
+        # instanciate a known Branch and add it to the tree
         widget = self.branches[branch_name](parent)
         previous_branch = self.branch
         self.branch = widget

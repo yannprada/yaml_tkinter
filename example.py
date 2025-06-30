@@ -4,7 +4,7 @@ from yamltk import Builder
 
 # inherit Tk or Frame
 class ExampleApp(tk.Tk):
-    # required for root App, and each Addon
+    # required for root App, and each Branch
     yaml_file = 'example.yaml'
     
     # define this method, so that it is bound automatically
@@ -20,7 +20,7 @@ class ExampleApp(tk.Tk):
     # TODO: example with manual event binding (command)
 
 
-# Addon example
+# Branch example
 class TitleFrame(tk.Frame):
     yaml_file = 'title_frame.yaml'
     

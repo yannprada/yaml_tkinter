@@ -24,13 +24,13 @@ class Builder:
     tk_variables = {}
     tk_widgets = {}
     
-    def __init__(self, root_class, addons_classes):
+    def __init__(self, root_class, branch_classes):
         # make a lookup by name
-        self.addons = {cls.__name__: cls for cls in addons_classes}
+        self.branches = {cls.__name__: cls for cls in branch_classes}
         
         # create the root
         self.root = root_class()
-        self.current_root = self.root
+        self.branch = self.root
         
         # build the root
         data = self._get_file_data(self.root.yaml_file)
@@ -51,14 +51,16 @@ class Builder:
         widget_name = next(iter(data.keys()))
         
         # instanciate the widget
-        if widget_name in self.addons:
-            # widget is one of addons
-            widget = self.addons[widget_name]()
-            self.previous_root = self.current_root
-            self.current_root = widget
+        if widget_name in self.branches:
+            # widget is one of branches
+            widget = self.branches[widget_name]()
+            previous_branch = self.branch
+            self.branch = widget
+            
             data = self._get_file_data(widget.yaml_file)
             self._build_widget(widget, data[widget_name])
-            self.current_root = self.previous_root
+            
+            self.branch = previous_branch
         else:
             widget_class = getattr(tk, widget_name)
             widget = widget_class(parent)
@@ -80,7 +82,7 @@ class Builder:
                 case 'text_variable':
                     widget.configure(textvariable=self._get_var(value))
                 case 'app_command':
-                    cmd = getattr(self.current_root, value)
+                    cmd = getattr(self.branch, value)
                     widget.configure(command=cmd)
                 case _:
                     if key in widget.configure():

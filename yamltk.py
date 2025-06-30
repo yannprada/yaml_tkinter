@@ -14,11 +14,7 @@ TK_VARIABLES = {
 }
 
 
-# TODO: find a less hacky way than self.previous_root and self.current_root
-# to bind a widget to its intended object
-
-# ALSO: try putting Addon's yaml filename in the parent's file
-#   example: TitleFrame: title_frame.yaml
+# TODO: 
 
 class Builder:
     tk_variables = {}

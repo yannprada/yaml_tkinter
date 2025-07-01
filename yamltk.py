@@ -67,6 +67,7 @@ class Builder:
     
     def _build_widget(self, widget, data):
         # run through the widgets options, commands, children and special keys
+        options = widget.configure()
         for key, value in data.items():
             match key:
                 case 'children':
@@ -82,7 +83,7 @@ class Builder:
                     cmd = getattr(self.branch, value)
                     widget.configure(command=cmd)
                 case _:
-                    if key in widget.configure():
+                    if key in options:
                         widget.configure(**{key: value})
                     else:
                         method = getattr(widget, key)

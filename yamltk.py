@@ -14,7 +14,7 @@ TK_VARIABLES = {
 }
 
 
-# TODO: 
+# TODO: rethink
 
 class Builder:
     tk_variables = {}

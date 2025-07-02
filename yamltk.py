@@ -26,6 +26,7 @@ class Builder:
         
         # create the root
         self.root = root_class()
+        self.root.builder = self
         self.branch = self.root
         
         # build the root
@@ -57,6 +58,7 @@ class Builder:
             raise AttributeError(msg)
             
         widget = widget_class(parent)
+        widget.builder = self
         previous_branch = self.branch
         self.branch = widget
         
@@ -64,6 +66,8 @@ class Builder:
         self._build_widget(widget, data[branch_name])
         
         self.branch = previous_branch
+        
+        parent.event_generate('<<on_add_branch>>')
     
     def _create_widget(self, data, parent=None):
         # the first key should be the name of the widget

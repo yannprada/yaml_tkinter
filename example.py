@@ -32,10 +32,4 @@ class Item(tk.Frame):
 
 if __name__ == '__main__':
     builder = Builder(ExampleApp, [TitleFrame, Item])
-    
-    def on_button_add():
-        builder.add_branch('Item', builder.tk_widgets['bottom_frame'])
-    
-    builder.tk_widgets['button_add'].configure(command=on_button_add)
-    
     builder.root.mainloop()

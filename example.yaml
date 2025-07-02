@@ -86,6 +86,9 @@ ExampleApp:
                     children:
                         - Button:
                             id: button_add
+                            add_branch:
+                                name: Item
+                                parent_id: bottom_frame
                             text: +
                             font: ['', 16, bold]
                             width: 3

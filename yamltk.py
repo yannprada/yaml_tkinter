@@ -42,9 +42,21 @@ class Builder:
             data = yaml.load(f, Loader)
         return data
     
-    def add_branch(self, branch_name, parent=None):
+    def add_branch(self, branch_name, parent):
         # instanciate a known Branch and add it to the tree
-        widget = self.branches[branch_name](parent)
+        if isinstance(parent, str):
+            parent_id = parent
+            parent = self.tk_widgets.get(parent_id)
+            if parent is None:
+                msg = f'add_branch: parent id does not exist: {parent_id}'
+                raise AttributeError(msg)
+        
+        widget_class = self.branches.get(branch_name)
+        if widget_class is None:
+            msg = f'add_branch: branch does not exist: {branch_name}'
+            raise AttributeError(msg)
+            
+        widget = widget_class(parent)
         previous_branch = self.branch
         self.branch = widget
         
@@ -82,6 +94,20 @@ class Builder:
                 case 'app_command':
                     cmd = getattr(self.branch, value)
                     widget.configure(command=cmd)
+                case 'add_branch':
+                    branch_name = value.get('name')
+                    if branch_name is None:
+                        msg = f'add_branch: missing parameter: name'
+                        raise AttributeError(msg)
+                    
+                    parent_id = value.get('parent_id')
+                    if parent_id is None:
+                        msg = f'add_branch: missing parameter: parent_id'
+                        raise AttributeError(msg)
+                    
+                    widget.configure(command=lambda: 
+                        self.add_branch(branch_name, parent_id)
+                    )
                 case _:
                     if key in options:
                         widget.configure(**{key: value})

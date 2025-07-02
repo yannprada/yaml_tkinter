@@ -1,4 +1,4 @@
-ExampleApp:
+Root:
     title: YAML Tkinter Example
     geometry: 400x400
     children:

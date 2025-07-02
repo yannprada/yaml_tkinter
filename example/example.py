@@ -1,11 +1,13 @@
+import sys
+sys.path.append('..')
 import tkinter as tk
-from yamltk import Builder
+import yamltk
 
 
-# inherit Tk or Frame
-class ExampleApp(tk.Tk):
+# name must match in the yaml file
+class Root(tk.Tk):
     # required for root App, and each Branch
-    yaml_file = 'example.yaml'
+    yaml_file = 'root.yaml'
     
     # define this method, so that it is bound automatically
     # since it is referenced in the example.yaml file
@@ -31,5 +33,5 @@ class Item(tk.Frame):
 
 
 if __name__ == '__main__':
-    builder = Builder(ExampleApp, [TitleFrame, Item])
+    builder = yamltk.Builder(Root, [TitleFrame, Item])
     builder.root.mainloop()

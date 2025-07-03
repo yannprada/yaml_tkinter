@@ -14,5 +14,25 @@ Item:
         - Entry:
             pack:
                 side: top
+        - Frame:
+            children:
+                - Radiobutton:
+                    text: discount
+                    value: true
+                    variable:
+                        name: discount
+                        type: boolean
+                    pack:
+                        side: left
+                - Radiobutton:
+                    text: full price
+                    value: false
+                    variable:
+                        name: discount
+                        type: boolean
+                    pack:
+                        side: left
+            pack:
+                side: top
     pack:
         side: left

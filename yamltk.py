@@ -60,6 +60,7 @@ class Builder:
         _check_param(parent, msg)
         
         widget = widget_class(parent)
+        widget.parent = parent
         widget.builder = self
         previous_branch = self.branch
         self.branch = widget
@@ -85,6 +86,7 @@ class Builder:
         else:
             widget_class = getattr(tk, widget_name)
             widget = widget_class(parent)
+            widget.parent = parent
             self._build_widget(widget, data[widget_name])
     
     def _build_widget(self, widget, data):
@@ -111,10 +113,10 @@ class Builder:
         self.tk_widgets[value] = widget
     
     def _handle_variable(self, widget, key, value, options):
-        widget.configure(variable=self._get_var(value))
+        widget.configure(variable=self._get_variable(widget, value))
     
     def _handle_text_variable(self, widget, key, value, options):
-        widget.configure(textvariable=self._get_var(value))
+        widget.configure(textvariable=self._get_variable(widget, value))
     
     def _handle_app_command(self, widget, key, value, options):
         cmd = getattr(self.branch, value)
@@ -136,10 +138,15 @@ class Builder:
             method = getattr(widget, key)
             method(value)
     
-    def _get_var(self, data):
+    def _get_variable(self, widget, data):
+        # use the widget.parent.uid if asked
+        name = data['name']
+        if data.get('use_parent_uid'):
+            name = f'{name}.{widget.parent.uid}'
+        
         # check if the variable has already been created
-        if data['name'] in self.tk_variables:
-            return self.tk_variables[data['name']]
+        if name in self.tk_variables:
+            return self.tk_variables[name]
         
         # otherwise, create the variable, using the appropriate type
         var_class = TK_VARIABLES.get(data['type'])
@@ -148,5 +155,5 @@ class Builder:
         
         # reference it for later lookup
         var_instance = var_class()
-        self.tk_variables[data['name']] = var_instance
+        self.tk_variables[name] = var_instance
         return var_instance

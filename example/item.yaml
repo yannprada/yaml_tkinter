@@ -16,12 +16,17 @@ Item:
                 side: top
         - Frame:
             children:
+                # if use_parent_uid is true,
+                # each variable or text_variable uses the uid
+                # of the widget's parent (Frame in this example)
+                # these Radiobuttons will be in separate groups
                 - Radiobutton:
                     text: discount
                     value: true
                     variable:
                         name: discount
                         type: boolean
+                        use_parent_uid: true
                     pack:
                         side: left
                 - Radiobutton:
@@ -30,6 +35,7 @@ Item:
                     variable:
                         name: discount
                         type: boolean
+                        use_parent_uid: true
                     pack:
                         side: left
             pack:

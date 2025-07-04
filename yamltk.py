@@ -20,7 +20,6 @@ def _check_param(param, msg):
 
 
 class Builder:
-    tk_variables = {}
     tk_widgets = {}
     
     def __init__(self, root_class, branch_classes):

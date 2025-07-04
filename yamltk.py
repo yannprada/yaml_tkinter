@@ -72,7 +72,7 @@ class Builder:
         data = self._get_file_data(widget.yaml_file)
         self._build_widget(widget, data[branch_name])
         
-        if init_args is not None:
+        if isinstance(init_args, list):
             widget.init(*init_args)
         
         self.branch = previous_branch

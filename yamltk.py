@@ -19,6 +19,20 @@ def _check_param(param, msg):
         raise AttributeError(msg)
 
 
+# TODO: add support for branches with arguments or extra data
+# example:
+# TimeEntry:
+    # id: when
+    # text: foo
+# or
+# TimeEntry: [when, foo]
+
+# arguments would go into Branch.__init__
+# extra data would go before or after the file data, if any
+
+# maybe decide with what comes after Branch name?
+
+
 class Builder:
     tk_widgets = {}
     
@@ -55,7 +69,7 @@ class Builder:
         
         widget_class = self.branches.get(branch_name)
         msg = f'add_branch: branch does not exist: {branch_name}'
-        _check_param(parent, msg)
+        _check_param(branch_name, msg)
         
         widget = widget_class(parent)
         widget.parent = parent

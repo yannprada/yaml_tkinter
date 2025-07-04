@@ -14,10 +14,12 @@ TK_VARIABLES = {
 }
 
 
-# TODO: 
+def _check_param(param, msg):
+    if param is None:
+        raise AttributeError(msg)
+
 
 class Builder:
-    tk_variables = {}
     tk_widgets = {}
     
     def __init__(self, root_class, branch_classes):
@@ -27,6 +29,7 @@ class Builder:
         # create the root
         self.root = root_class()
         self.root.builder = self
+        self.root.tk_variables = {}
         self.branch = self.root
         
         # build the root
@@ -36,7 +39,6 @@ class Builder:
         
         # keep a reference to widgets with ids and tk varables
         self.root.tk_widgets = self.tk_widgets
-        self.root.tk_variables = self.tk_variables
     
     def _get_file_data(self, filename):
         with open(filename) as f:
@@ -48,17 +50,17 @@ class Builder:
         if isinstance(parent, str):
             parent_id = parent
             parent = self.tk_widgets.get(parent_id)
-            if parent is None:
-                msg = f'add_branch: parent id does not exist: {parent_id}'
-                raise AttributeError(msg)
+            msg = f'add_branch: parent id does not exist: {parent_id}'
+            _check_param(parent, msg)
         
         widget_class = self.branches.get(branch_name)
-        if widget_class is None:
-            msg = f'add_branch: branch does not exist: {branch_name}'
-            raise AttributeError(msg)
-            
+        msg = f'add_branch: branch does not exist: {branch_name}'
+        _check_param(parent, msg)
+        
         widget = widget_class(parent)
+        widget.parent = parent
         widget.builder = self
+        widget.tk_variables = {}
         previous_branch = self.branch
         self.branch = widget
         
@@ -79,50 +81,75 @@ class Builder:
         else:
             widget_class = getattr(tk, widget_name)
             widget = widget_class(parent)
+            widget.parent = parent
             self._build_widget(widget, data[widget_name])
     
     def _build_widget(self, widget, data):
-        # run through the widgets options, commands, children and special keys
         options = widget.configure()
+        actions = {
+            'children': self._handle_children,
+            'id': self._handle_id,
+            'variable': self._handle_variable,
+            'text_variable': self._handle_text_variable,
+            'app_command': self._handle_app_command,
+            'add_branch': self._handle_add_branch,
+            'pack': self._handle_pack
+        }
+        
         for key, value in data.items():
-            match key:
-                case 'children':
-                    for child_data in value:
-                        self._create_widget(child_data, widget)
-                case 'id':
-                    self.tk_widgets[value] = widget
-                case 'variable':
-                    widget.configure(variable=self._get_var(value))
-                case 'text_variable':
-                    widget.configure(textvariable=self._get_var(value))
-                case 'app_command':
-                    cmd = getattr(self.branch, value)
-                    widget.configure(command=cmd)
-                case 'add_branch':
-                    branch_name = value.get('name')
-                    if branch_name is None:
-                        msg = f'add_branch: missing parameter: name'
-                        raise AttributeError(msg)
-                    
-                    parent_id = value.get('parent_id')
-                    if parent_id is None:
-                        msg = f'add_branch: missing parameter: parent_id'
-                        raise AttributeError(msg)
-                    
-                    widget.configure(command=lambda: 
-                        self.add_branch(branch_name, parent_id)
-                    )
-                case _:
-                    if key in options:
-                        widget.configure(**{key: value})
-                    else:
-                        method = getattr(widget, key)
-                        method(value)
+            action = actions.get(key, self._handle_default)
+            action(widget, key, value, options)
     
-    def _get_var(self, data):
+    def _handle_children(self, widget, key, value, options):
+        for child_data in value:
+            self._create_widget(child_data, widget)
+    
+    def _handle_id(self, widget, key, value, options):
+        self.tk_widgets[value] = widget
+    
+    def _handle_variable(self, widget, key, value, options):
+        widget.configure(variable=self._get_variable(widget, value))
+    
+    def _handle_text_variable(self, widget, key, value, options):
+        widget.configure(textvariable=self._get_variable(widget, value))
+    
+    def _handle_app_command(self, widget, key, value, options):
+        cmd = getattr(self.branch, value)
+        widget.configure(command=cmd)
+    
+    def _handle_add_branch(self, widget, key, value, options):
+        branch_name = value.get('name')
+        _check_param(branch_name, 'add_branch: missing parameter: name')
+        
+        parent_id = value.get('parent_id')
+        _check_param(parent_id, 'add_branch: missing parameter: parent_id')
+        
+        widget.configure(command=lambda: self.add_branch(branch_name, parent_id))
+    
+    def _handle_pack(self, widget, key, value, options):
+        if isinstance(value, dict):
+            widget.pack(value)
+        elif isinstance(value, list) or isinstance(value, bool):
+            widget.pack()
+        elif isinstance(value, str):
+            if value in ('x', 'y', 'both'):
+                widget.pack(fill=value)
+            elif value in ('left', 'right', 'top', 'down'):
+                widget.pack(side=value)
+    
+    def _handle_default(self, widget, key, value, options):
+        if key in options:
+            widget.configure(**{key: value})
+        else:
+            method = getattr(widget, key)
+            method(value)
+    
+    def _get_variable(self, widget, data):
+        name = data['name']
+        
         # check if the variable has already been created
-        if data['name'] in self.tk_variables:
-            return self.tk_variables[data['name']]
+        if name in self.branch.tk_variables:
+            return self.branch.tk_variables[name]
         
         # otherwise, create the variable, using the appropriate type
         var_class = TK_VARIABLES.get(data['type'])
@@ -131,5 +158,5 @@ class Builder:
         
         # reference it for later lookup
         var_instance = var_class()
-        self.tk_variables[data['name']] = var_instance
+        self.branch.tk_variables[name] = var_instance
         return var_instance

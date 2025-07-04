@@ -2,17 +2,29 @@ Item:
     children:
         - Label:
             text: 'Item name'
-            pack:
-                side: top
+            pack: top
         - Entry:
-            pack:
-                side: top
+            pack: top
         - Label:
             text: 'Price'
-            pack:
-                side: top
+            pack: top
         - Entry:
-            pack:
-                side: top
-    pack:
-        side: left
+            pack: top
+        - Frame:
+            children:
+                - Radiobutton:
+                    text: discount
+                    value: true
+                    variable:
+                        name: discount
+                        type: boolean
+                    pack: left
+                - Radiobutton:
+                    text: full price
+                    value: false
+                    variable:
+                        name: discount
+                        type: boolean
+                    pack: left
+            pack: top
+    pack: left

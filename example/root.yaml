@@ -11,24 +11,20 @@ Root:
                     children:
                         - Label:
                             text: type something
-                            pack:
-                                side: top
+                            pack: top
                         - Entry:
                             id: entry
                             text_variable:
                                 name: entry_var
                                 type: string
-                            pack:
-                                side: top
+                            pack: top
                         - Label:
                             id: entry_label
                             text_variable:
                                 name: entry_var
                                 type: string
-                            pack:
-                                side: top
-                    pack:
-                        side: left
+                            pack: top
+                    pack: left
                 - Frame:
                     children:
                         - Checkbutton:
@@ -38,7 +34,7 @@ Root:
                             variable:
                                 name: check_foo_var
                                 type: boolean
-                            pack: []
+                            pack: true
                         - Checkbutton:
                             text: bar
                             # this method must then be defined in the application class
@@ -46,7 +42,7 @@ Root:
                             variable:
                                 name: check_bar_var
                                 type: boolean
-                            pack: []
+                            pack: yes
                         - Label:
                             text_variable:
                                 name: check_foobar_var
@@ -92,8 +88,7 @@ Root:
                             text: +
                             font: ['', 16, bold]
                             width: 3
-                            pack:
-                                side: right
+                            pack: right
                     pack:
                         side: left
                         expand: true

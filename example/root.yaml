@@ -3,7 +3,7 @@ Root:
     geometry: 400x400
     children:
         # Branch with a list: 
-        #   will be passed as arguments to Branch.__init__
+        #   will be passed as arguments to Branch.init
         - TitleFrame: ['YAML Tkinter Example', red]
         - Frame:
             children:

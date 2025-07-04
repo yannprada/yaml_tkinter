@@ -35,7 +35,7 @@ class Builder:
         self.root = root_class()
         self.root.builder = self
         self.root.tk_variables = {}
-        self.branch = self.root
+        self.current_branch = self.root
         
         # build the root
         data = self._get_file_data(self.root.yaml_file)
@@ -50,7 +50,7 @@ class Builder:
             data = yaml.load(f, Loader)
         return data
     
-    def add_branch(self, branch_name, parent, init_args=None):
+    def add_branch(self, branch_name, parent, data=None):
         # instanciate a known Branch and add it to the tree
         if isinstance(parent, str):
             parent_id = parent
@@ -66,18 +66,21 @@ class Builder:
         widget.parent = parent
         widget.builder = self
         widget.tk_variables = {}
-        previous_branch = self.branch
-        self.branch = widget
+        if isinstance(data, dict):
+            self._build_widget(widget, data)
         
-        data = self._get_file_data(widget.yaml_file)
-        self._build_widget(widget, data[branch_name])
+        previous_branch = self.current_branch
+        self.current_branch = widget
+        file_data = self._get_file_data(widget.yaml_file)
+        self._build_widget(widget, file_data[branch_name])
+        self.current_branch = previous_branch
         
-        if init_args is None:
-            init_args = []
         if hasattr(widget, 'init'):
-            widget.init(*init_args)
+            if isinstance(data, list):
+                widget.init(*data)
+            else:
+                widget.init()
         
-        self.branch = previous_branch
         parent.event_generate('<<on_add_branch>>')
     
     def _create_widget(self, data, parent=None):
@@ -123,7 +126,7 @@ class Builder:
         widget.configure(textvariable=self._get_variable(widget, value))
     
     def _handle_app_command(self, widget, key, value, options):
-        cmd = getattr(self.branch, value)
+        cmd = getattr(self.current_branch, value)
         widget.configure(command=cmd)
     
     def _handle_add_branch(self, widget, key, value, options):
@@ -157,8 +160,8 @@ class Builder:
         name = data['name']
         
         # check if the variable has already been created
-        if name in self.branch.tk_variables:
-            return self.branch.tk_variables[name]
+        if name in self.current_branch.tk_variables:
+            return self.current_branch.tk_variables[name]
         
         # otherwise, create the variable, using the appropriate type
         var_class = TK_VARIABLES.get(data['type'])
@@ -167,5 +170,5 @@ class Builder:
         
         # reference it for later lookup
         var_instance = var_class()
-        self.branch.tk_variables[name] = var_instance
+        self.current_branch.tk_variables[name] = var_instance
         return var_instance

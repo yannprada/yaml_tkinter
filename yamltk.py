@@ -19,18 +19,9 @@ def _check_param(param, msg):
         raise AttributeError(msg)
 
 
-# TODO: add support for branches with arguments or extra data
-# example:
-# TimeEntry:
-    # id: when
-    # text: foo
-# or
-# TimeEntry: [when, foo]
-
-# arguments would go into Branch.__init__
-# extra data would go before or after the file data, if any
-
-# maybe decide with what comes after Branch name?
+# TODO: add support for branches with extra data that would go 
+# inside an inner container
+# this is different than branches with arguments
 
 
 class Builder:
@@ -59,7 +50,7 @@ class Builder:
             data = yaml.load(f, Loader)
         return data
     
-    def add_branch(self, branch_name, parent):
+    def add_branch(self, branch_name, parent, init_args=None):
         # instanciate a known Branch and add it to the tree
         if isinstance(parent, str):
             parent_id = parent
@@ -81,8 +72,10 @@ class Builder:
         data = self._get_file_data(widget.yaml_file)
         self._build_widget(widget, data[branch_name])
         
-        self.branch = previous_branch
+        if init_args is not None:
+            widget.init(*init_args)
         
+        self.branch = previous_branch
         parent.event_generate('<<on_add_branch>>')
     
     def _create_widget(self, data, parent=None):
@@ -91,7 +84,7 @@ class Builder:
         
         # instanciate the widget
         if widget_name in self.branches:
-            self.add_branch(widget_name, parent)
+            self.add_branch(widget_name, parent, data[widget_name])
         else:
             widget_class = getattr(tk, widget_name)
             widget = widget_class(parent)

@@ -1,11 +1,10 @@
 TitleFrame:
     children:
         - Label:
-            text: YAML Tkinter Example
-            fg: red
+            id: title_label
+            text: Example
             font: ['', 20, bold]
-            pack:
-                side: left
+            pack: left
         - Frame:
             pack:
                 side: left
@@ -16,8 +15,7 @@ TitleFrame:
             # this method must then be defined in the application class
             app_command: on_button_exit
             width: 5
-            pack:
-                side: left
+            pack: left
     pack:
         side: top
         fill: x

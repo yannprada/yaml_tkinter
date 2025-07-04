@@ -2,7 +2,9 @@ Root:
     title: YAML Tkinter Example
     geometry: 400x400
     children:
-        - TitleFrame: true  # value can be anything
+        # Branch with a list: 
+        #   will be passed as arguments to Branch.__init__
+        - TitleFrame: ['YAML Tkinter Example', red]
         - Frame:
             children:
                 - Frame:

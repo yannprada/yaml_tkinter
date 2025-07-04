@@ -24,6 +24,11 @@ class Root(tk.Tk):
 class TitleFrame(tk.Frame):
     yaml_file = 'title_frame.yaml'
     
+    def init(self, title, color):
+        self.builder.tk_widgets['title_label'].configure(
+            text=title, fg=color
+        )
+    
     def on_button_exit(self):
         quit()
 

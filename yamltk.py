@@ -72,7 +72,10 @@ class Builder:
         data = self._get_file_data(widget.yaml_file)
         self._build_widget(widget, data[branch_name])
         
-        if isinstance(init_args, list):
+        if init_args is None:
+            init_args = []
+        
+        if hasattr(widget, 'init'):
             widget.init(*init_args)
         
         self.branch = previous_branch

@@ -74,7 +74,6 @@ class Builder:
         
         if init_args is None:
             init_args = []
-        
         if hasattr(widget, 'init'):
             widget.init(*init_args)
         

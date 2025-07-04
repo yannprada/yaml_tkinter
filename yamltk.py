@@ -22,7 +22,6 @@ def _check_param(param, msg):
 class Builder:
     tk_variables = {}
     tk_widgets = {}
-    _new_branch_uid = 0
     
     def __init__(self, root_class, branch_classes):
         # make a lookup by name
@@ -31,6 +30,7 @@ class Builder:
         # create the root
         self.root = root_class()
         self.root.builder = self
+        self.root.tk_variables = {}
         self.branch = self.root
         
         # build the root
@@ -40,7 +40,6 @@ class Builder:
         
         # keep a reference to widgets with ids and tk varables
         self.root.tk_widgets = self.tk_widgets
-        self.root.tk_variables = self.tk_variables
     
     def _get_file_data(self, filename):
         with open(filename) as f:
@@ -62,6 +61,7 @@ class Builder:
         widget = widget_class(parent)
         widget.parent = parent
         widget.builder = self
+        widget.tk_variables = {}
         previous_branch = self.branch
         self.branch = widget
         
@@ -71,10 +71,6 @@ class Builder:
         self.branch = previous_branch
         
         parent.event_generate('<<on_add_branch>>')
-    
-    def _get_branch_uid(self):
-        self._new_branch_uid += 1
-        return self._new_branch_uid
     
     def _create_widget(self, data, parent=None):
         # the first key should be the name of the widget
@@ -90,7 +86,6 @@ class Builder:
             self._build_widget(widget, data[widget_name])
     
     def _build_widget(self, widget, data):
-        widget.uid = self._get_branch_uid()
         options = widget.configure()
         actions = {
             'children': self._handle_children,
@@ -98,7 +93,8 @@ class Builder:
             'variable': self._handle_variable,
             'text_variable': self._handle_text_variable,
             'app_command': self._handle_app_command,
-            'add_branch': self._handle_add_branch
+            'add_branch': self._handle_add_branch,
+            'pack': self._handle_pack
         }
         
         for key, value in data.items():
@@ -131,6 +127,17 @@ class Builder:
         
         widget.configure(command=lambda: self.add_branch(branch_name, parent_id))
     
+    def _handle_pack(self, widget, key, value, options):
+        if isinstance(value, dict):
+            widget.pack(value)
+        elif isinstance(value, list) or isinstance(value, bool):
+            widget.pack()
+        elif isinstance(value, str):
+            if value in ('x', 'y', 'both'):
+                widget.pack(fill=value)
+            elif value in ('left', 'right', 'top', 'down'):
+                widget.pack(side=value)
+    
     def _handle_default(self, widget, key, value, options):
         if key in options:
             widget.configure(**{key: value})
@@ -139,14 +146,11 @@ class Builder:
             method(value)
     
     def _get_variable(self, widget, data):
-        # use the widget.parent.uid if asked
         name = data['name']
-        if data.get('use_parent_uid'):
-            name = f'{name}.{widget.parent.uid}'
         
         # check if the variable has already been created
-        if name in self.tk_variables:
-            return self.tk_variables[name]
+        if name in self.branch.tk_variables:
+            return self.branch.tk_variables[name]
         
         # otherwise, create the variable, using the appropriate type
         var_class = TK_VARIABLES.get(data['type'])
@@ -155,5 +159,5 @@ class Builder:
         
         # reference it for later lookup
         var_instance = var_class()
-        self.tk_variables[name] = var_instance
+        self.branch.tk_variables[name] = var_instance
         return var_instance

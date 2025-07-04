@@ -34,4 +34,5 @@ class Item(tk.Frame):
 
 if __name__ == '__main__':
     builder = yamltk.Builder(Root, [TitleFrame, Item])
+    builder.root.tk_variables['radio_var'].set('tea')
     builder.root.mainloop()

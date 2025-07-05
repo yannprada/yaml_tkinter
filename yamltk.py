@@ -106,7 +106,8 @@ class Builder:
             'app_command': self._handle_app_command,
             'add_branch': self._handle_add_branch,
             'pack': self._handle_pack,
-            'grid': self._handle_grid
+            'grid': self._handle_grid,
+            'font_size': self._handle_font_size
         }
         
         for key, value in data.items():
@@ -140,21 +141,27 @@ class Builder:
         widget.configure(command=lambda: self.add_branch(branch_name, parent_id))
     
     def _handle_pack(self, widget, key, value, options):
-        if isinstance(value, dict):
-            widget.pack(value)
-        elif isinstance(value, list) or isinstance(value, bool):
+        if isinstance(value, list) or isinstance(value, bool):
             widget.pack()
         elif isinstance(value, str):
             if value in ('x', 'y', 'both'):
                 widget.pack(fill=value)
             elif value in ('left', 'right', 'top', 'down'):
                 widget.pack(side=value)
+        else:
+            widget.pack(value)
     
     def _handle_grid(self, widget, key, value, options):
-        if isinstance(value, dict):
-            widget.grid(value)
-        elif isinstance(value, list):
+        if isinstance(value, list):
             widget.grid(row=value[0], column=value[1])
+        else:
+            widget.grid(value)
+    
+    def _handle_font_size(self, widget, key, value, options):
+        if isinstance(value, int):
+            widget.configure(font=('', value))
+        else:
+            raise TypeError
     
     def _handle_default(self, widget, key, value, options):
         if key in options:

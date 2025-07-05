@@ -108,7 +108,8 @@ class Builder:
             'add_branch': self._handle_add_branch,
             'pack': self._handle_pack,
             'grid': self._handle_grid,
-            'font_size': self._handle_font_size
+            'font_size': self._handle_font_size,
+            'minsize': self._handle_minsize
         }
         
         for key, value in data.items():
@@ -163,6 +164,10 @@ class Builder:
             widget.configure(font=('', value))
         else:
             raise TypeError
+    
+    def _handle_minsize(self, widget, key, value, options):
+        if isinstance(value, list) or isinstance(value, tuple):
+            widget.minsize(*value)
     
     def _handle_default(self, widget, key, value, options):
         if key in options:

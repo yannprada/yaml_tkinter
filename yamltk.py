@@ -105,7 +105,8 @@ class Builder:
             'text_variable': self._handle_text_variable,
             'app_command': self._handle_app_command,
             'add_branch': self._handle_add_branch,
-            'pack': self._handle_pack
+            'pack': self._handle_pack,
+            'grid': self._handle_grid
         }
         
         for key, value in data.items():
@@ -148,6 +149,12 @@ class Builder:
                 widget.pack(fill=value)
             elif value in ('left', 'right', 'top', 'down'):
                 widget.pack(side=value)
+    
+    def _handle_grid(self, widget, key, value, options):
+        if isinstance(value, dict):
+            widget.grid(value)
+        elif isinstance(value, list):
+            widget.grid(row=value[0], column=value[1])
     
     def _handle_default(self, widget, key, value, options):
         if key in options:

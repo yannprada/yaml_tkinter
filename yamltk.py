@@ -69,11 +69,12 @@ class Builder:
         if isinstance(data, dict):
             self._build_widget(widget, data)
         
-        previous_branch = self.current_branch
-        self.current_branch = widget
-        file_data = self._get_file_data(widget.yaml_file)
-        self._build_widget(widget, file_data[branch_name])
-        self.current_branch = previous_branch
+        if hasattr(widget, 'yaml_file'):
+            previous_branch = self.current_branch
+            self.current_branch = widget
+            file_data = self._get_file_data(widget.yaml_file)
+            self._build_widget(widget, file_data[branch_name])
+            self.current_branch = previous_branch
         
         if hasattr(widget, 'init'):
             if isinstance(data, list):

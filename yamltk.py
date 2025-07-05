@@ -166,7 +166,7 @@ class Builder:
             raise TypeError
     
     def _handle_minsize(self, widget, key, value, options):
-        if isinstance(value, list) or isinstance(value, tuple):
+        if isinstance(value, list):
             widget.minsize(*value)
     
     def _handle_default(self, widget, key, value, options):

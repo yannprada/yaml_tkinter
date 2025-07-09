@@ -174,7 +174,12 @@ class Builder:
             widget.configure(**{key: value})
         else:
             method = getattr(widget, key)
-            method(value)
+            # for methods that take more than one argument, 
+            # specify them as a list in the yaml file
+            if type(value) is list and method.__code__.co_argcount > 1:
+                method(*value)
+            else:
+                method(value)
     
     def _get_variable(self, widget, data):
         name = data['name']

@@ -103,6 +103,7 @@ class Builder:
             'children': self._handle_children,
             'id': self._handle_id,
             'variable': self._handle_variable,
+            'list_variable': self._handle_list_variable,
             'text_variable': self._handle_text_variable,
             'app_command': self._handle_app_command,
             'add_branch': self._handle_add_branch,
@@ -125,6 +126,9 @@ class Builder:
     
     def _handle_variable(self, widget, key, value, options):
         widget.configure(variable=self._get_variable(widget, value))
+    
+    def _handle_list_variable(self, widget, key, value, options):
+        widget.configure(listvariable=self._get_variable(widget, value))
     
     def _handle_text_variable(self, widget, key, value, options):
         widget.configure(textvariable=self._get_variable(widget, value))

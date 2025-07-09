@@ -188,7 +188,11 @@ class Builder:
         if var_class is None:
             raise TypeError(f"Unexpected variable type: {data['type']}")
         
-        # reference it for later lookup
+        # instantiate
         var_instance = var_class()
+        # default value
+        if data.get('default'):
+            var_instance.set(data.get('default'))
+        # reference it for later lookup
         self.current_branch.tk_variables[name] = var_instance
         return var_instance

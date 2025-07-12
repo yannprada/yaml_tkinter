@@ -78,6 +78,7 @@ class Builder:
                 widget.init()
         
         parent.event_generate('<<on_add_branch>>')
+        return widget
     
     def _create_widget(self, data, parent=None):
         # the first key should be the name of the widget

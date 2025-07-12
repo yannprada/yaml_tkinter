@@ -20,8 +20,6 @@ def _check_param(param, msg):
 
 
 class Builder:
-    tk_widgets = {}
-    
     def __init__(self, root_class, branch_classes):
         # make a lookup by name
         self.branches = {cls.__name__: cls for cls in branch_classes}
@@ -36,9 +34,6 @@ class Builder:
         data = self._get_file_data(self.root.yaml_file)
         data = data[root_class.__name__] # only need contents under the widget name
         self._build_widget(self.root, data)
-        
-        # keep a reference to widgets with ids and tk varables
-        self.root.tk_widgets = self.tk_widgets
     
     def _get_file_data(self, filename):
         with open(filename) as f:
@@ -105,7 +100,6 @@ class Builder:
         options = widget.configure()
         actions = {
             'children': self._handle_children,
-            'id': self._handle_id,
             'variable': self._handle_variable,
             'list_variable': self._handle_list_variable,
             'text_variable': self._handle_text_variable,
@@ -124,9 +118,6 @@ class Builder:
     def _handle_children(self, widget, key, value, options):
         for child_data in value:
             self._create_widget(child_data, widget)
-    
-    def _handle_id(self, widget, key, value, options):
-        self.tk_widgets[value] = widget
     
     def _handle_variable(self, widget, key, value, options):
         widget.configure(variable=self._get_variable(widget, value))

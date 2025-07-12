@@ -19,11 +19,6 @@ def _check_param(param, msg):
         raise AttributeError(msg)
 
 
-# TODO: add support for branches with extra data that would go 
-# inside an inner container
-# this is different than branches with arguments
-
-
 class Builder:
     tk_widgets = {}
     
@@ -50,30 +45,35 @@ class Builder:
             data = yaml.load(f, Loader)
         return data
     
-    def add_branch(self, branch_name, parent, data=None):
+    def add_branch(self, branch_name, name, parent, data=None):
         # instanciate a known Branch and add it to the tree
-        if isinstance(parent, str):
-            parent_id = parent
-            parent = self.tk_widgets.get(parent_id)
-            msg = f'add_branch: parent id does not exist: {parent_id}'
-            _check_param(parent, msg)
-        
         widget_class = self.branches.get(branch_name)
         msg = f'add_branch: branch does not exist: {branch_name}'
         _check_param(branch_name, msg)
         
-        widget = widget_class(parent)
+        # gather data from class yaml file
+        file_data = {}
+        if hasattr(widget_class, 'yaml_file'):
+            file_data = self._get_file_data(widget_class.yaml_file)
+            file_data = file_data[branch_name]
+        
+        # if name is not provided, try to get it from file data
+        if name is None:
+            name = file_data.pop('name', name)
+        
+        # create the widget
+        widget = widget_class(parent,  name=name)
         widget.parent = parent
         widget.builder = self
         widget.tk_variables = {}
+        
         if isinstance(data, dict):
             self._build_widget(widget, data)
         
-        if hasattr(widget, 'yaml_file'):
+        if len(file_data) > 0:
             previous_branch = self.current_branch
             self.current_branch = widget
-            file_data = self._get_file_data(widget.yaml_file)
-            self._build_widget(widget, file_data[branch_name])
+            self._build_widget(widget, file_data)
             self.current_branch = previous_branch
         
         if hasattr(widget, 'init'):
@@ -87,15 +87,19 @@ class Builder:
     def _create_widget(self, data, parent=None):
         # the first key should be the name of the widget
         widget_name = next(iter(data.keys()))
+        data = data[widget_name]
+        name = None
+        if isinstance(data, dict) and data.get('name'):
+            name = data.pop('name')
         
         # instanciate the widget
         if widget_name in self.branches:
-            self.add_branch(widget_name, parent, data[widget_name])
+            self.add_branch(widget_name, name, parent, data)
         else:
             widget_class = getattr(tk, widget_name)
-            widget = widget_class(parent)
+            widget = widget_class(parent, name=name)
             widget.parent = parent
-            self._build_widget(widget, data[widget_name])
+            self._build_widget(widget, data)
     
     def _build_widget(self, widget, data):
         options = widget.configure()

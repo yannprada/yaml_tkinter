@@ -57,19 +57,18 @@ class Builder:
             name = file_data.pop('name', name)
         
         # create the widget
-        widget = widget_class(parent,  name=name)
-        widget.parent = parent
+        widget = self.create(widget_class, parent, name)
         widget.builder = self
         widget.tk_variables = {}
+        
+        previous_branch = self.current_branch
+        self.current_branch = widget
         
         if isinstance(data, dict):
             self._build_widget(widget, data)
         
         if len(file_data) > 0:
-            previous_branch = self.current_branch
-            self.current_branch = widget
             self._build_widget(widget, file_data)
-            self.current_branch = previous_branch
         
         if hasattr(widget, 'init'):
             if isinstance(data, list):
@@ -77,13 +76,21 @@ class Builder:
             else:
                 widget.init()
         
-        parent.event_generate('<<on_add_branch>>')
+        self.current_branch = previous_branch
+        return widget
+    
+    def create(self, widget_class, parent, name=None):
+        widget = widget_class(parent,  name=name)
+        widget.parent = parent
+        if name is not None:
+            setattr(self.current_branch, name, widget)
         return widget
     
     def _create_widget(self, data, parent=None):
         # the first key should be the name of the widget
         widget_name = next(iter(data.keys()))
         data = data[widget_name]
+        
         name = None
         if isinstance(data, dict) and data.get('name'):
             name = data.pop('name')
@@ -93,8 +100,7 @@ class Builder:
             self.add_branch(widget_name, name, parent, data)
         else:
             widget_class = getattr(tk, widget_name)
-            widget = widget_class(parent, name=name)
-            widget.parent = parent
+            widget = self.create(widget_class, parent, name)
             self._build_widget(widget, data)
     
     def _build_widget(self, widget, data):

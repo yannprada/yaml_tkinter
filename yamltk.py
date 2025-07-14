@@ -111,6 +111,7 @@ class Builder:
             'list_variable': self._handle_list_variable,
             'text_variable': self._handle_text_variable,
             'app_command': self._handle_app_command,
+            'app_command_event': self._handle_app_command_event,
             'add_branch': self._handle_add_branch,
             'pack': self._handle_pack,
             'grid': self._handle_grid,
@@ -137,6 +138,10 @@ class Builder:
     
     def _handle_app_command(self, widget, key, value, options):
         cmd = getattr(self.current_branch, value)
+        widget.configure(command=cmd)
+    
+    def _handle_app_command_event(self, widget, key, value, options):
+        cmd = lambda branch=self.current_branch: branch.event_generate(f'<<{value}>>')
         widget.configure(command=cmd)
     
     def _handle_add_branch(self, widget, key, value, options):

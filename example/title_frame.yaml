@@ -1,7 +1,7 @@
 TitleFrame:
     children:
         - Label:
-            id: title_label
+            name: title_label
             text: Example
             font: ['', 20, bold]
             pack: left

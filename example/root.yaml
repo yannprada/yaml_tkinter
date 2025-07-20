@@ -15,13 +15,13 @@ Root:
                             text: type something
                             pack: top
                         - Entry:
-                            id: entry
+                            name: entry
                             text_variable:
                                 name: entry_var
                                 type: string
                             pack: top
                         - Label:
-                            id: entry_label
+                            name: entry_label
                             text_variable:
                                 name: entry_var
                                 type: string
@@ -83,10 +83,7 @@ Root:
                 - Frame:
                     children:
                         - Button:
-                            id: button_add
-                            add_branch:
-                                name: Item
-                                parent_id: bottom_frame
+                            name: button_add
                             text: +
                             font: ['', 16, bold]
                             width: 3
@@ -99,7 +96,7 @@ Root:
                 side: top
                 fill: x
         - Frame:
-            id: bottom_frame
+            name: bottom_frame
             pack:
                 side: top
                 expand: true

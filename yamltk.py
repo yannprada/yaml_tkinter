@@ -34,6 +34,9 @@ class Builder:
         data = self._get_file_data(self.root.yaml_file)
         data = data[root_class.__name__] # only need contents under the widget name
         self._build_widget(self.root, data)
+        
+        if hasattr(self.root, 'init'):
+            self.root.init()
     
     def _get_file_data(self, filename):
         with open(filename) as f:
@@ -112,7 +115,6 @@ class Builder:
             'text_variable': self._handle_text_variable,
             'app_command': self._handle_app_command,
             'app_command_event': self._handle_app_command_event,
-            'add_branch': self._handle_add_branch,
             'pack': self._handle_pack,
             'grid': self._handle_grid,
             'font_size': self._handle_font_size,
@@ -143,16 +145,7 @@ class Builder:
     def _handle_app_command_event(self, widget, key, value, options):
         cmd = lambda branch=self.current_branch: branch.event_generate(f'<<{value}>>')
         widget.configure(command=cmd)
-    
-    def _handle_add_branch(self, widget, key, value, options):
-        branch_name = value.get('name')
-        _check_param(branch_name, 'add_branch: missing parameter: name')
-        
-        parent_id = value.get('parent_id')
-        _check_param(parent_id, 'add_branch: missing parameter: parent_id')
-        
-        widget.configure(command=lambda: self.add_branch(branch_name, parent_id))
-    
+
     def _handle_pack(self, widget, key, value, options):
         if isinstance(value, list) or isinstance(value, bool):
             widget.pack()

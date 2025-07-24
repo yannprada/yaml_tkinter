@@ -25,11 +25,9 @@ class Root(tk.Tk):
     # since it is referenced in the example.yaml file
     def on_checkbutton_foobar(self):
         # here is how to access tk variables
-        foo = self.tk_variables['check_foo_var'].get()
-        bar = self.tk_variables['check_bar_var'].get()
-        foo = 'foo' if foo else ''
-        bar = 'bar' if bar else ''
-        self.tk_variables['check_foobar_var'].set(f'{foo} {bar}')
+        foo = 'foo' if self.check_foo_var.get() else ''
+        bar = 'bar' if self.check_bar_var.get() else ''
+        self.check_foobar_var.set(f'{foo} {bar}')
 
 
 # Branch example
@@ -53,5 +51,5 @@ if __name__ == '__main__':
     # A Root branch is required to build the application
     # other branches are optional
     builder = yamltk.Builder(Root, [TitleFrame, Item])
-    builder.root.tk_variables['radio_var'].set('tea')
+    builder.root.radio_var.set('tea')
     builder.root.mainloop()

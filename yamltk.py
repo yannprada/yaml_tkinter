@@ -27,7 +27,6 @@ class Builder:
         # create the root
         self.root = root_class()
         self.root.builder = self
-        self.root.tk_variables = {}
         self.current_branch = self.root
         
         # build the root
@@ -62,7 +61,6 @@ class Builder:
         # create the widget
         widget = self.create(widget_class, parent, name)
         widget.builder = self
-        widget.tk_variables = {}
         
         previous_branch = self.current_branch
         self.current_branch = widget
@@ -189,8 +187,8 @@ class Builder:
         name = data['name']
         
         # check if the variable has already been created
-        if name in self.current_branch.tk_variables:
-            return self.current_branch.tk_variables[name]
+        if hasattr(self.current_branch, name):
+            return getattr(self.current_branch, name)
         
         # otherwise, create the variable, using the appropriate type
         var_class = TK_VARIABLES.get(data['type'])
@@ -199,9 +197,11 @@ class Builder:
         
         # instantiate
         var_instance = var_class()
+        
         # default value
         if data.get('default'):
             var_instance.set(data.get('default'))
+        
         # reference it for later lookup
-        self.current_branch.tk_variables[name] = var_instance
+        setattr(self.current_branch, name, var_instance)
         return var_instance

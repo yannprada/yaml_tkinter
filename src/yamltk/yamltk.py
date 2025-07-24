@@ -6,6 +6,11 @@ except ImportError:
     from yaml import Loader
 
 
+def build(root_class, branch_classes=None):
+    builder = Builder(root_class, branch_classes)
+    return builder.root
+
+
 TK_VARIABLES = {
     'boolean': tk.BooleanVar, 
     'double': tk.DoubleVar, 
@@ -20,8 +25,10 @@ def _check_param(param, msg):
 
 
 class Builder:
-    def __init__(self, root_class, branch_classes):
+    def __init__(self, root_class, branch_classes=None):
         # make a lookup by name
+        if branch_classes is None:
+            branch_classes = []
         self.branches = {cls.__name__: cls for cls in branch_classes}
         
         # create the root

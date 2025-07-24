@@ -195,13 +195,10 @@ class Builder:
         if var_class is None:
             raise TypeError(f"Unexpected variable type: {data['type']}")
         
-        # instantiate
-        var_instance = var_class()
+        # instantiate with default value if any
+        var_instance = var_class(value=data.get('default'))
         
-        # default value
-        if data.get('default'):
-            var_instance.set(data.get('default'))
-        
-        # reference it for later lookup
+        # assign it as a member of current branch
         setattr(self.current_branch, name, var_instance)
+        
         return var_instance

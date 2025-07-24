@@ -1,5 +1,8 @@
 import sys
 sys.path.append('..')
+
+# copy everything below for the README
+
 import tkinter as tk
 import yamltk
 
@@ -48,7 +51,7 @@ class Item(tk.Frame):
 
 
 if __name__ == '__main__':
-    # A Root branch is required to build the application
+    # A Root branch is required to build the application (name can be anything)
     # other branches are optional
     builder = yamltk.Builder(Root, [TitleFrame, Item])
     builder.root.radio_var.set('tea')

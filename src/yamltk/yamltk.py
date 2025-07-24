@@ -1,3 +1,25 @@
+"""
+yamltk.py
+
+A utility for building Tkinter GUI widget trees from YAML configuration files.
+
+This module provides the `Builder` class, which reads a YAML file describing the 
+widget hierarchy and properties, then instantiates and configures Tkinter widgets 
+accordingly. It supports custom branch classes, variable binding, and flexible 
+widget configuration, making it easy to define complex GUIs declaratively.
+
+Typical usage:
+    import yamltk
+
+    root = yamltk.build(MyRootWidget, [MyBranchWidget, ...])
+    root.mainloop()
+
+YAML files should specify the widget structure, options, and variables. See the 
+example YAML and widget classes for details.
+
+Author: Yannick Pradayrol (2025)
+"""
+
 import tkinter as tk
 import yaml
 try:
@@ -7,6 +29,7 @@ except ImportError:
 
 
 def build(root_class, branch_classes=None):
+    """Build the branches and returns the root."""
     builder = Builder(root_class, branch_classes)
     return builder.root
 
@@ -20,12 +43,29 @@ TK_VARIABLES = {
 
 
 def _check_param(param, msg):
+    """Raises an AttributeError with the given message if `param` is None."""
     if param is None:
         raise AttributeError(msg)
 
 
 class Builder:
     def __init__(self, root_class, branch_classes=None):
+        """
+        Initializes the Builder with a root widget class and a list of branch 
+        (child) widget classes.
+
+        Args:
+            root_class (type): The class of the root Tkinter widget 
+                               (must have a `yaml_file` attribute).
+            branch_classes (list[type]): List of branch widget classes to support 
+                                         as children.
+
+        Side Effects:
+            - Instantiates the root widget.
+            - Loads the YAML file specified by the root widget.
+            - Builds the widget tree according to the YAML structure.
+            - Calls the root's `init()` method if it exists.
+        """
         # make a lookup by name
         if branch_classes is None:
             branch_classes = []
@@ -45,12 +85,30 @@ class Builder:
             self.root.init()
     
     def _get_file_data(self, filename):
+        # Loads and parses YAML data from the specified file.
         with open(filename) as f:
             data = yaml.load(f, Loader)
         return data
     
     def add_branch(self, branch_name, name, parent, data=None):
-        # instanciate a known Branch and add it to the tree
+        """
+        Instantiates a known branch widget and adds it to the widget tree.
+
+        Args:
+            branch_name (str): The name of the branch class to instantiate.
+            name (str or None): The name to assign to the new widget 
+                                (used as an attribute on the parent).
+            parent (tk.Widget): The parent widget to attach the new branch to.
+            data (dict, optional): Additional YAML data for the branch. 
+                                   If None, loads from the branch's YAML file.
+
+        Returns:
+            tk.Widget: The newly created branch widget.
+
+        Raises:
+            AttributeError: If the branch_name is not found in the registered 
+                            branches.
+        """
         widget_class = self.branches.get(branch_name)
         msg = f'add_branch: branch does not exist: {branch_name}'
         _check_param(branch_name, msg)
@@ -88,6 +146,8 @@ class Builder:
         return widget
     
     def _create(self, widget_class, parent, name=None):
+        # Instantiates a widget of the given class, attaches it to the parent, 
+        # and assigns it as an attribute if named.
         widget = widget_class(parent,  name=name)
         widget.parent = parent
         if name is not None:
@@ -112,6 +172,7 @@ class Builder:
             self._build_widget(widget, data)
     
     def _build_widget(self, widget, data):
+        # Recursively configures a widget and its children.
         options = widget.configure()
         actions = {
             'children': self._handle_children,
@@ -191,6 +252,7 @@ class Builder:
                 method(value)
     
     def _get_variable(self, widget, data):
+        # Retrieves or creates a Tkinter variable for the given widget.
         name = data['name']
         
         # check if the variable has already been created

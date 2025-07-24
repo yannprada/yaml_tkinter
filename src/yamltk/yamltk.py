@@ -1,9 +1,9 @@
 import tkinter as tk
 import yaml
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CLoader as Loader
 except ImportError:
-    from yaml import Loader, Dumper
+    from yaml import Loader
 
 
 TK_VARIABLES = {
@@ -59,7 +59,7 @@ class Builder:
             name = file_data.pop('name', name)
         
         # create the widget
-        widget = self.create(widget_class, parent, name)
+        widget = self._create(widget_class, parent, name)
         widget.builder = self
         
         previous_branch = self.current_branch
@@ -80,7 +80,7 @@ class Builder:
         self.current_branch = previous_branch
         return widget
     
-    def create(self, widget_class, parent, name=None):
+    def _create(self, widget_class, parent, name=None):
         widget = widget_class(parent,  name=name)
         widget.parent = parent
         if name is not None:
@@ -101,7 +101,7 @@ class Builder:
             self.add_branch(widget_name, name, parent, data)
         else:
             widget_class = getattr(tk, widget_name)
-            widget = self.create(widget_class, parent, name)
+            widget = self._create(widget_class, parent, name)
             self._build_widget(widget, data)
     
     def _build_widget(self, widget, data):

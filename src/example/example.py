@@ -3,6 +3,7 @@ sys.path.append('..')
 
 # copy everything below for the README
 
+from tk_double_scale import DoubleScale
 import tkinter as tk
 import yamltk
 
@@ -54,6 +55,6 @@ class Item(tk.Frame):
 if __name__ == '__main__':
     # A Root branch is required to build the application (name can be anything)
     # other branches are optional
-    builder = yamltk.Builder(Root, [TitleFrame, Item])
+    builder = yamltk.Builder(Root, [TitleFrame, Item, DoubleScale])
     builder.root.radio_var.set('tea')
     builder.root.mainloop()

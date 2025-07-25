@@ -27,4 +27,9 @@ Item:
                         type: boolean
                     pack: left
             pack: top
+        - DoubleScale:
+            init_kwargs:
+                to: 1
+                decimals: 2
+            pack: top
     pack: left

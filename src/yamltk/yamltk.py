@@ -20,6 +20,7 @@ example YAML and widget classes for details.
 Author: Yannick Pradayrol (2025)
 """
 
+import inspect
 import tkinter as tk
 import yaml
 try:
@@ -125,7 +126,7 @@ class Builder:
             name = file_data.pop('name', name)
         
         # create the widget
-        widget = self._create(widget_class, parent, name)
+        widget = self._create(widget_class, parent, data, name)
         widget.builder = self
         
         previous_branch = self.current_branch
@@ -144,10 +145,19 @@ class Builder:
         self.current_branch = previous_branch
         return widget
     
-    def _create(self, widget_class, parent, name=None):
+    def _create(self, widget_class, parent, data=None, name=None):
         # Instantiates a widget of the given class, attaches it to the parent, 
         # and assigns it as an attribute if named.
-        widget = widget_class(parent, name=name)
+        if data is None:
+            data = {}
+        args = data.get('init_args', [])
+        kwargs = data.get('init_kwargs', {})
+
+        signature = inspect.signature(widget_class.__init__)
+        if signature.parameters.get('name'):
+            kwargs['name'] = name
+        
+        widget = widget_class(parent, *args, **kwargs)
         widget.parent = parent
         if name is not None:
             setattr(self.current_branch, name, widget)
@@ -167,7 +177,7 @@ class Builder:
             self.add_branch(widget_name, name, parent, data)
         else:
             widget_class = getattr(tk, widget_name)
-            widget = self._create(widget_class, parent, name)
+            widget = self._create(widget_class, parent, data, name)
             self._build_widget(widget, data)
     
     def _build_widget(self, widget, data):
@@ -188,6 +198,8 @@ class Builder:
             'grid': self._handle_grid,
             'font_size': self._handle_font_size,
             'minsize': self._handle_minsize,
+            'init_args': dummy,
+            'init_kwargs': dummy,
             'post_build_args': dummy,
             'post_build_kwargs': dummy
         }

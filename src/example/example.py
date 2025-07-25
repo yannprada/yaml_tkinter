@@ -12,8 +12,8 @@ class Root(tk.Tk):
     # Specify the YAML file that defines the layout
     yaml_file = 'root.yaml'
     
-    # Initialize the widget after it has been built
-    def init(self):
+    # Executed after the widget has been built
+    def post_build(self):
         self.button_add.configure(command=self.on_add_button)
 
     def on_add_button(self):
@@ -37,10 +37,11 @@ class Root(tk.Tk):
 class TitleFrame(tk.Frame):
     yaml_file = 'title_frame.yaml'
     
-    def init(self, title, color):
+    def post_build(self, title, color, foo=None, quz=0):
         self.title_label.configure(
             text=title, fg=color
         )
+        print(foo, quz)     # > bar 1
     
     def on_button_exit(self):
         quit()

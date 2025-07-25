@@ -2,9 +2,14 @@ Root:
     title: YAML Tkinter Example
     geometry: 400x400
     children:
-        # Branch with a list: 
-        #   will be passed as arguments to Branch.init
-        - TitleFrame: ['YAML Tkinter Example', red]
+        # Branch with args and kwargs for the post_init method
+        - TitleFrame:
+            post_build_args:    # putting the list [] here would be equivalent
+                - 'YAML Tkinter Example'
+                - red
+            post_build_kwargs:  # same with the dict {}
+                foo: bar
+                quz: 1
         - Frame:
             children:
                 - Frame:

@@ -64,7 +64,7 @@ class Builder:
             - Instantiates the root widget.
             - Loads the YAML file specified by the root widget.
             - Builds the widget tree according to the YAML structure.
-            - Calls the root's `init()` method if it exists.
+            - Calls the root's `post_build()` method if it exists.
         """
         # make a lookup by name
         if branch_classes is None:
@@ -81,8 +81,9 @@ class Builder:
         data = data[root_class.__name__] # only need contents under the widget name
         self._build_widget(self.root, data)
         
-        if hasattr(self.root, 'init'):
-            self.root.init()
+        if hasattr(self.root, 'post_build'):
+            self.root.post_build(*data.get('post_build_args', []),
+                                 **data.get('post_build_kwargs', {}))
     
     def _get_file_data(self, filename):
         # Loads and parses YAML data from the specified file.
@@ -136,11 +137,9 @@ class Builder:
         if len(file_data) > 0:
             self._build_widget(widget, file_data)
         
-        if hasattr(widget, 'init'):
-            if isinstance(data, list):
-                widget.init(*data)
-            else:
-                widget.init()
+        if hasattr(widget, 'post_build'):
+            widget.post_build(*data.get('post_build_args', []),
+                              **data.get('post_build_kwargs', {}))
         
         self.current_branch = previous_branch
         return widget
@@ -148,7 +147,7 @@ class Builder:
     def _create(self, widget_class, parent, name=None):
         # Instantiates a widget of the given class, attaches it to the parent, 
         # and assigns it as an attribute if named.
-        widget = widget_class(parent,  name=name)
+        widget = widget_class(parent, name=name)
         widget.parent = parent
         if name is not None:
             setattr(self.current_branch, name, widget)
@@ -173,7 +172,11 @@ class Builder:
     
     def _build_widget(self, widget, data):
         # Recursively configures a widget and its children.
+        def dummy(*args):
+            pass
+
         options = widget.configure()
+
         actions = {
             'children': self._handle_children,
             'variable': self._handle_variable,
@@ -184,7 +187,9 @@ class Builder:
             'pack': self._handle_pack,
             'grid': self._handle_grid,
             'font_size': self._handle_font_size,
-            'minsize': self._handle_minsize
+            'minsize': self._handle_minsize,
+            'post_build_args': dummy,
+            'post_build_kwargs': dummy
         }
         
         for key, value in data.items():

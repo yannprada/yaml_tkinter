@@ -139,8 +139,13 @@ class Builder:
             self._build_widget(widget, file_data)
         
         if hasattr(widget, 'post_build'):
-            widget.post_build(*data.get('post_build_args', []),
-                              **data.get('post_build_kwargs', {}))
+            if data is None:
+                data = {}
+            args = file_data.get('post_build_args', [])
+            args.extend(data.get('post_build_args', []))
+            kwargs = file_data.get('post_build_kwargs', {})
+            kwargs.update(data.get('post_build_kwargs', {}))
+            widget.post_build(*args, **kwargs)
         
         self.current_branch = previous_branch
         return widget

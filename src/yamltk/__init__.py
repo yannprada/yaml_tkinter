@@ -1,1 +1,1 @@
-from .yamltk import Builder
+from .yamltk import Builder, build

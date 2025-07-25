@@ -10,7 +10,8 @@ import yamltk
 
 # The name must match in the yaml file
 class Root(tk.Tk):
-    # Specify the YAML file that defines the layout
+    # Specify the YAML file that defines the layout.
+    # path must be absolute, or relative to the directory running the script
     yaml_file = 'root.yaml'
     
     # Executed after the widget has been built
@@ -55,6 +56,6 @@ class Item(tk.Frame):
 if __name__ == '__main__':
     # A Root branch is required to build the application (name can be anything)
     # other branches are optional
-    builder = yamltk.Builder(Root, [TitleFrame, Item, DoubleScale])
-    builder.root.radio_var.set('tea')
-    builder.root.mainloop()
+    root = yamltk.build(Root, [TitleFrame, Item, DoubleScale])
+    root.radio_var.set('tea')
+    root.mainloop()

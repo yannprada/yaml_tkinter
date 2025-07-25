@@ -27,6 +27,7 @@ Item:
                         type: boolean
                     pack: left
             pack: top
+        # Example of inserting 3rd party widgets
         - DoubleScale:
             init_kwargs:
                 to: 1

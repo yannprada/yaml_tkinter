@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling >= 1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "yamltk"
+version = "0.0.1"
+authors = [
+  { name="Yannick Pradayrol", email="pradayrol.yannick@gmail.com" },
+]
+description = "A utility for building Tkinter widget trees from YAML files."
+readme = "README.md"
+requires-python = ">=3.13.3"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "GPL-3.0-only"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "PyYAML >= 6.0.2"
+]
+
+[project.urls]
+Homepage = "https://github.com/yannprada/yaml_tkinter"
+Issues = "https://github.com/yannprada/yaml_tkinter/issues"
